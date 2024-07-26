@@ -2,7 +2,7 @@
 <html  xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta http-equiv="Content-Type"content="text/html";charset="UTF-8">
-<meta name="viewport" contunue="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<meta name="viewport" contunue ="width=device-width,initial-scale=1.0,minimum-scale=1.0">
 <title>[[${pageTitle}]]</title>
 <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
 <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
@@ -62,7 +62,9 @@
 <h2> Manage Users || [[${pageTitle}]]</h2>
 </div>
 
-<form th:action="@{/users/save}" method="post" style="max-width:700px; margin: 0 auto" th:object="${User}" onsubmit="return checkEmailUnique(this);">
+<form th:action="@{/users/save}" method="post" style="max-width:700px; margin: 0 auto" 
+enctype="multipart/form-data"
+th:object="${User}" onsubmit="return checkEmailUnique(this);">
  <input type="hidden" th:field="*{id}"/>
  <div class= "border border-secondary rounded p-3">
 
@@ -106,11 +108,23 @@
         </th:block>
         </div>
     </div>
+    
     <div class="form-group row">
      <label class="col-sm-4 col-form-label">Enabled:</label>
         <div class="col-sm-8">
            <input type="checkbox" th:field="*{enabled}" />
          </div>
+         </div>
+         
+         <div class="form-group row">
+             <label class="col-sm-4 col-form-label">Photos:</label>
+                <div class="col-sm-8">
+                    <input type="hidden" th:field="*{photos}"/>
+                    <input type="file" id="fileImage" name="image" accept="image/png, image/jpeg" 
+                     class="mb-2"/>
+                    <img id="thumbnail" alt="photos priviews" th:src="@{${User.PhotosImagePath}}"
+                    class="img-fluid" />
+                  </div>
          </div>
 
     <div class="text-center">
@@ -145,7 +159,28 @@
 $(document).ready(function(){$("#buttonCancel").on("click",function(){
 window.location="[[@{/users}]]";
 });
+$("#fileImage").change(function(){ 
+  fileSize=this.files[0].size;
+  alert("File Size " +fileSize);
+  if(fileSize>1048576){
+  this.setCustomValidity("you must choosen an image less than 1MB");
+  this.reportValidity();
+  } else{
+  this.setCustomValidity("");
+  showImageThumbnail(this);
+   }
 });
+
+});
+function showImageThumbnail(fileInput){
+ var file=fileInput.files[0];
+ var reader=new FileReader();
+  reader.onload=function(e) {
+    $("#thumbnail").attr("src", e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
  function checkEmailUnique(form) {
  url="[[@{/users/check_email}]]";
  userEmail=$("#email").val();
@@ -175,5 +210,6 @@ else if(response == "Duplicate")
   $("#modalDialog").modal();
   }
 </script>
+
 </body>
 </html>

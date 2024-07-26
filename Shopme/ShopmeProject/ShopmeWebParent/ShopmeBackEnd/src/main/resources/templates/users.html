@@ -84,7 +84,9 @@
         <tbody>
         <tr th:each= "user:${ListUsers}">
             <td>[[${user.id}]]</td>
-            <td> <span class="fas fa-portrait  fa-3x icon-silver"></span></td>
+            <td> <span th:if="${user.photos==null}" class="fas fa-portrait  fa-3x icon-silver"></span>
+            <img th:if="${user.photos!=null}" th:src="@{${user.PhotosImagePath}}" style="width:100px "/>
+            </td>
             <td>[[${user.email}]]</td>
             <td>[[${user.firstname}]]</td>
             <td>[[${user.lastname}]]</td>
@@ -94,7 +96,8 @@
              
            <a th:if="${user.enabled==false}" class="fas fa-circle  fa-2x icon-dark" 
            th:href="@{'/users/' + ${user.id} + '/enabled/true'}" title=" Enable this User"></a>
-</td>
+           </td>
+           
             <td>
             <a class="fas fa-edit  fa-2x icon-green" th:href="@{'/users/edit/'+ ${user.id}}"  title="Edit this user"></a>
             &nbsp; 
@@ -104,6 +107,40 @@
         </tbody>
 </table>
 </div>
+<div class="text-center m-1" th:if="${totalItems>0}">
+     <span>Showing users # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+</div>
+<div class="text-center m-1" th:unless="${totalItems>0}">
+     <span>No Users Found</span>
+</div>
+<div>
+  <nav>
+    <ul class="pagination justify-content-center">
+    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+         <a class="page-link" th:href="@{/users/page/1}">First</a>
+     </li>
+    
+     <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+        <a class="page-link" th:href="@{'/users/page/'+${currentPage-1}}">Previous</a>
+     </li>
+     
+     <li th:class="${currentPage != i ? 'page-item': 'page-item active'}" 
+          th:each="i : ${#numbers.sequence(1,totalPages)}">
+          <a class="page-link" th:href="@{'/users/page/'+${i}}">[[${i}]]</a>
+     </li>
+     
+     <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+         <a class="page-link" th:href="@{'/users/page/'+${currentPage+1}}">Next</a>
+     </li>
+     
+     <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+         <a class="page-link" th:href="@{'/users/page/'+${totalPages}}">Last</a>
+     </li>
+     
+   </ul>
+ </nav>
+</div>
+
 <div class="modal fade text-center" id="confirmModal">
    <div class="modal-dialog">
       <div class="modal-content">

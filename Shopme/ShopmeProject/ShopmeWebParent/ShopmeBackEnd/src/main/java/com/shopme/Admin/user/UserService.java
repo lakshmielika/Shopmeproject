@@ -4,14 +4,21 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
 
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class UserService {
+	public static final  int User_Per_Page = 4;
 	@Autowired
   private UserRepository userrepo;
 	@Autowired
@@ -20,13 +27,18 @@ public class UserService {
 	private PasswordEncoder pe;
 	public List<User> listAll(){
 		return (List<User>) userrepo.findAll();
+		}
+	public Page<User> listBypage(int pageNum){
+		Pageable pageable=PageRequest.of(pageNum-1,  User_Per_Page);
+		return userrepo.findAll(pageable);
+		
 		
 	}
 	public List<Role>listRoles(){
 		return (List<Role>) rolerepo.findAll();
 		
 	}
-	public void save(User users) {
+	public User save(User users) {
 		boolean isUpdatingUser=(users.getId()!=null);
 		if(isUpdatingUser) {
 			User existingUser=userrepo.findById(users.getId()).get();
@@ -39,7 +51,7 @@ public class UserService {
 			encoderpassword(users);
 		}
 		
-		userrepo.save(users);
+		 return userrepo.save(users);
 		
 		}
 	public void encoderpassword(User user) {
@@ -74,7 +86,8 @@ public class UserService {
 		    	  }
 		      userrepo.deleteById(id);
 	 }
-public void updateUserEnabledStatus(Integer id, boolean enabled) {
+	 
+	public void updateUserEnabledStatus(Integer id, boolean enabled) {
 		userrepo.updateEanbledStatus(id, enabled);
 		
 	}
