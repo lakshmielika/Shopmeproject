@@ -104,7 +104,7 @@ public class UserRepositoryTest {
 	}
 	@Test
 	public void testListFirstPage() {
-		int PageNumber=1;
+		int PageNumber=0;
 		int PageSize=4;
 		
 		Pageable pageable= PageRequest.of(PageNumber, PageSize);
@@ -113,6 +113,19 @@ public class UserRepositoryTest {
 		 listUsers.forEach(user->System.out.println(user));
 		 assertThat(listUsers.size()).isEqualTo(PageSize);
 		 
+	}
+	@Test
+	public void testSearchUser() {
+		String Keyword="bruce";
+		int PageNumber=0;
+		int PageSize=4;
+		
+		Pageable pageable= PageRequest.of(PageNumber, PageSize);
+		Page<User> page=repo.findAll(Keyword,pageable);
+		 List<User> listUsers=page.getContent();
+		 listUsers.forEach(user->System.out.println(user));
+		 assertThat(listUsers.size()).isGreaterThan(0);
+		
 	}
 	
 	
