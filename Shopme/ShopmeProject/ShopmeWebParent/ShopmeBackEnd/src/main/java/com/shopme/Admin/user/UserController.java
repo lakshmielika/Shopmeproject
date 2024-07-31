@@ -20,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.shopme.Admin.FileUploadUtil;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
+
+import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class UserController {
    @Autowired
@@ -128,6 +130,27 @@ private String getRedirectURLtoAffectedUser(User users) {
 	   String message=" The User Id " +id+" has been " + status;
 	   redirectAttributes.addFlashAttribute("message",message);
 	   return "redirect:/users";
+	   
+   }
+   @GetMapping("/users/export/csv")
+    public void exportToCSV(HttpServletResponse response) throws IOException {
+	    List<User> listUsers=Service.listAll();
+	   UserCsvExporter exporter=new UserCsvExporter();
+	   exporter.export(listUsers, response);
+    	
+    }
+   @GetMapping("/users/export/excel")
+   public void exportToExcel(HttpServletResponse response) throws IOException {
+	   List<User> listUsers=Service.listAll();
+	   UserExcelExporter exporter=new UserExcelExporter();
+	   exporter.export(listUsers, response);
+	   
+   }
+   @GetMapping("/users/export/pdf")
+   public void exportToPdf(HttpServletResponse response) throws IOException {
+	   List<User> listUsers=Service.listAll();
+	   UserPDFExporter exporter=new UserPDFExporter();
+	   exporter.export(listUsers, response);
 	   
    }
 }

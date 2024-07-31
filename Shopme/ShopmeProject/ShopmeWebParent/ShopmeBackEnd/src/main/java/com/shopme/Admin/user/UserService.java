@@ -27,7 +27,7 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder pe;
 	public List<User> listAll(){
-		return (List<User>) userrepo.findAll();
+		return (List<User>) userrepo.findAll(Sort.by("firstname").ascending());
 		}
 	public Page<User> listBypage(int pageNum,String sortField,String sortDir,String keyword){
 		Sort sort= Sort.by(sortField);
